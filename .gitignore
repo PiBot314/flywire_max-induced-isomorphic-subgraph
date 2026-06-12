@@ -1,2 +1,8 @@
-data/edgelists
-data/neuron_properties/connectivity_tags
+data/edgelists/
+data/edgelists/BANC_edgelist.csv
+data/edgelists/MANC_edgelist.csv
+data/edgelists/MAOL_edgelist.csv
+data/edgelists/MCNS_edgelist.csv
+data/edgelists/FAFB_edgelist.csv
+data/neuron_properties/connectivity_tags/
+data/edgelists/
