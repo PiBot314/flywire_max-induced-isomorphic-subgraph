@@ -1,0 +1,326 @@
+"""
+SYSTEM ARCHITECTURE
+===================
+
+INPUT DATA
+==========
+  /processed/graph/
+    ├── BANC_graph.pkl          (28K nodes, 300K edges)
+    ├── FAFB_graph.pkl          (100K nodes, 900K edges)
+    ├── MANC_graph.pkl          (28K nodes, 440K edges)
+    ├── MAOL_graph.pkl          (10K nodes, 190K edges)
+    └── MCNS_graph.pkl          (20K nodes, 400K edges)
+  
+  /processed/degrees/
+    ├── neuron_degrees_1.csv    (BANC neuron stats)
+    ├── neuron_degrees_2.csv    (FAFB neuron stats)
+    ├── neuron_degrees_3.csv    (MANC neuron stats)
+    ├── neuron_degrees_4.csv    (MAOL neuron stats)
+    └── neuron_degrees_5.csv    (MCNS neuron stats)
+  
+  /data/neuron_properties/motifs_3neuron/
+    ├── banc_motif.csv          (Seed motifs: SC, BR, FL, etc.)
+    ├── fafb_motif.csv
+    ├── manc_motif.csv
+    ├── maol_motif.csv
+    └── mcns_motif.csv
+
+PROCESSING PIPELINE
+===================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        validate_setup.py                        │
+│  ✓ Check all files exist                                        │
+│  ✓ Load test data                                               │
+│  ✓ Verify format correctness                                    │
+└────────────────┬────────────────────────────────────────────────┘
+                 │ PASS
+                 ▼
+┌─────────────────────────────────────────────────────────────────┐
+│            isomorphic_circuit_finder.py (MAIN)                  │
+│                                                                 │
+│  DataLoader                                                     │
+│  ├─ load_graph(idx) → NetworkX DiGraph                         │
+│  ├─ load_degrees(idx) → Dict[int, (in_deg, out_deg)]          │
+│  └─ load_motifs(idx) → List[(a,b,c,type)]                     │
+│                                                                 │
+│  IsomorphicCircuitFinder                                        │
+│  ├─ find_circuit(dataset_triple)                               │
+│  │  ├─ For each seed motif in dataset 1                        │
+│  │  │  ├─ Find matching motifs in datasets 2,3                │
+│  │  │  │  └─ Match by structure signature                      │
+│  │  │  └─ expand_from_seed()                                   │
+│  │  │     ├─ Iterate until convergence                         │
+│  │  │     ├─ find_highest_degree_candidates()                  │
+│  │  │     │  └─ Get neighbors, filter by degree sequence       │
+│  │  │     ├─ Test each candidate: can_add_to_mapping()        │
+│  │  │     │  └─ Verify edge consistency across 3 graphs        │
+│  │  │     └─ Add valid candidate, save checkpoint              │
+│  │  └─ Track best result per trio                              │
+│  │                                                              │
+│  ├─ save_results()                                              │
+│  │  ├─ Export to CSV: (node_id, d1_neuron, d2_neuron, d3_neuron)
+│  │  └─ Export to JSON: statistics and metadata                 │
+│  │                                                              │
+│  └─ _save_checkpoint() → for recovery                          │
+│                                                                 │
+│  __main__                                                       │
+│  └─ run() → Process all dataset combinations                   │
+└──────────────────────┬───────────────────────────────────────────┘
+                       │ SUCCESS
+                       ▼
+OUTPUT DATA
+===========
+
+  /results/
+  ├── solution.csv
+  │   (Challenge deliverable - neuron mappings)
+  │   Format:
+  │     node_id, DATASET1_NEURON, DATASET2_NEURON, DATASET3_NEURON
+  │     0, 720575940000001, 720575940111111, 720575940222222
+  │     1, 720575940000002, 720575940111112, 720575940222223
+  │
+  ├── summary.json
+  │   (Statistics and metadata)
+  │   Content:
+  │     - Best result (size, edges, datasets, seed type)
+  │     - All alternative results
+  │     - Timestamp and version info
+  │
+  └── checkpoints/
+      (Partial results for resuming)
+      ├── checkpoint_3_4_5.json   (MANC-MAOL-MCNS checkpoint)
+      ├── checkpoint_2_3_4.json   (FAFB-MANC-MAOL checkpoint)
+      └── checkpoint_1_2_3.json   (BANC-FAFB-MANC checkpoint)
+
+
+ALGORITHM FLOW (Detailed)
+=========================
+
+For each 3-dataset combination (in priority order):
+  PRIORITY_TRIOS = [(3,4,5), (2,3,4), (1,2,3), ...]
+
+  1. LOAD DATA
+     ├─ Load 3 graphs (pickle files)
+     ├─ Load 3 degree dictionaries (CSV)
+     └─ Load seed motifs (CSV)
+
+  2. PROCESS SEEDS
+     For each seed motif (a1, b1, c1, type):
+       
+       2.1 FIND MATCHING MOTIFS
+           ├─ Get structure of seed: (edges between a,b,c)
+           ├─ Load all motifs of same type from datasets 2,3
+           ├─ Filter to only matching structures
+           └─ Collect matching triplets [(a2,b2,c2), (a3,b3,c3)]
+       
+       2.2 EXPAND FOR EACH MATCHING TRIPLET
+           Seed mapping: {0:(a1,a2,a3), 1:(b1,b2,b3), 2:(c1,c2,c3)}
+           
+           EXPANSION LOOP (max 1000 iterations):
+             a) Find all neighbors of current subgraph
+             b) Get candidates with matching (in_deg, out_deg)
+             c) Sort by total degree (in + out)
+             d) For each candidate (n1, n2, n3):
+                  IF can_add_to_mapping(n1,n2,n3):
+                    → Add to mapping
+                    → Break to next iteration
+                  ELSE:
+                    → Try next candidate
+             e) If no candidates added: CONVERGED
+       
+       2.3 TRACK BEST RESULT
+           IF len(new_mapping) > best_size:
+             → Update best_result
+             → Print progress
+       
+       2.4 SAVE CHECKPOINT
+           EVERY CHECKPOINT_INTERVAL seeds:
+             → Save best_result to JSON
+             → Allows resume on failure
+
+  3. OUTPUT BEST RESULT
+     ├─ Write solution.csv
+     ├─ Write summary.json
+     └─ Print summary to stdout
+
+
+ISOMORPHISM VERIFICATION (can_add_to_mapping)
+==============================================
+
+For each new candidate node triple (n1, n2, n3):
+
+  For all existing nodes (m1, m2, m3) in current mapping:
+    
+    1. Check forward edge (existing → new)
+       ├─ has_edge(m1, n1) in G1?
+       ├─ has_edge(m2, n2) in G2?
+       ├─ has_edge(m3, n3) in G3?
+       └─ ALL THREE MUST MATCH (same edge/non-edge)
+    
+    2. Check backward edge (new → existing)
+       ├─ has_edge(n1, m1) in G1?
+       ├─ has_edge(n2, m2) in G2?
+       ├─ has_edge(n3, m3) in G3?
+       └─ ALL THREE MUST MATCH
+    
+    IF any mismatch → return False
+    ELSE continue to next existing node
+
+  RESULT: True if all edge relationships consistent
+
+
+KEY PARAMETERS & TUNING
+=======================
+
+Speed Optimization:
+  - Reduce CHECKPOINT_INTERVAL (less I/O)
+  - Reduce max_iterations (fewer expansion steps)
+  - Reduce candidate attempt limit
+
+Quality Optimization:
+  - Increase max_iterations (more thorough)
+  - Increase max_no_progress (try harder per seed)
+  - Increase candidate attempt limit
+
+Balance:
+  Default settings: ~1-2 hours for good solution
+  Fast mode: ~30 minutes, smaller solutions
+  Thorough mode: ~4+ hours, larger solutions
+
+
+CHECKPOINTING STRATEGY
+======================
+
+When saving checkpoint (every N seeds):
+  ✓ Save best_result found so far
+  ✓ Save dataset_triple being processed
+  ✓ Save timestamp
+  ✓ Checkpoint file: checkpoint_D1_D2_D3.json
+
+When resuming (automatic on restart):
+  ✓ Algorithm loads from latest checkpoint
+  ✓ Continues processing remaining seeds
+  ✓ All results accumulated properly
+
+Benefits:
+  ✓ Can interrupt safely with Ctrl+C
+  ✓ Resume with same command
+  ✓ Gradual progress visible in checkpoints
+  ✓ No duplicate work when resuming
+
+
+SCALABILITY ANALYSIS
+====================
+
+Memory:
+  - Graph 1: ~100MB
+  - Graph 2: ~50MB
+  - Graph 3: ~50MB
+  - Degree data: ~1MB each
+  - Current mappings: ~1MB
+  → Total: ~300-500MB (OK for 8GB+ systems)
+
+Time:
+  - Data loading: 30-60 sec
+  - Seed matching: 5-30 sec per trio
+  - Expansion: 100-1000 msec per seed
+  - Per trio: 10-20 minutes on typical machine
+  - All 3 trios: 30-60 minutes
+
+Parallelization Opportunities:
+  1. Process different trios in parallel
+  2. Process different seed types in parallel
+  3. Try multiple expansion strategies in parallel
+
+
+ROBUSTNESS FEATURES
+===================
+
+Error Handling:
+  ✓ Try/catch on each seed processing
+  ✓ Continue on failure (don't crash)
+  ✓ Log errors with context
+
+Recovery:
+  ✓ Automatic checkpointing
+  ✓ Can resume from checkpoint
+  ✓ Partial results not lost
+
+Validation:
+  ✓ Isomorphism verified for each addition
+  ✓ Degree sequence matching enforced
+  ✓ Edge consistency checked bidirectionally
+
+Reporting:
+  ✓ Progress updates every 10% of seeds
+  ✓ Best solutions printed immediately
+  ✓ Final statistics in JSON and CSV
+  ✓ All results saved (not just best)
+
+
+ALGORITHM COMPLEXITY
+====================
+
+Time Complexity per seed:
+  - Seed matching: O(M²) where M = motif count per type (~100-500)
+  - Expansion iterations: O(I) where I ≤ 1000
+  - Per iteration:
+    - Find candidates: O(N) where N = graph size (20K-100K)
+    - Degree filtering: O(C log C) where C = candidate count (~1000)
+    - Isomorphism check: O(C * S) where S = current size (~10-100)
+  - Total per seed: O(M² + I * C * S)
+  - Overall: O(Seeds * (M² + I * C * S))
+
+Space Complexity:
+  - Graph storage: O(V + E) for each graph
+  - Degree mapping: O(V)
+  - Current mapping: O(N) where N = solution size
+  - Total: O(V + E)
+
+
+EXECUTION CHECKLIST
+===================
+
+Before running:
+  □ Python 3.7+ installed
+  □ pandas, networkx packages installed
+  □ Graph pickle files exist
+  □ Degree CSV files exist
+  □ Motif CSV files exist
+  □ /results/ directory writable
+  □ ~500MB free disk space
+
+Running:
+  □ cd /Users/arnav/agcode/flywire/qual_challenge
+  □ python validate_setup.py   (check all green)
+  □ python isomorphic_circuit_finder.py
+
+After completion:
+  □ solution.csv created
+  □ summary.json created
+  □ Check row count matches neuron_count
+  □ Verify CSV format correct
+  □ Read summary for statistics
+
+Next Steps:
+  □ Analyze results on FlyWire Codex
+  □ Look up cell types
+  □ Write biological summary
+  □ Prepare visualizations
+  □ Submit deliverables
+
+
+SUPPORT
+=======
+
+For issues:
+  1. Read ALGORITHM_USAGE.md → Troubleshooting section
+  2. Check QUICKSTART.md → Common Issues
+  3. Verify validate_setup.py passes
+  4. Check error messages in algorithm output
+  5. Inspect checkpoint files for partial results
+"""
+
+if __name__ == "__main__":
+    print(__doc__)
