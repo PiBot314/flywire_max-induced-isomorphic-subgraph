@@ -2,6 +2,8 @@
 Isomorphic Circuit Finder
 ========================
 Finds the largest isomorphic directed subgraph across 3 connectome datasets.
+Uses maximum-degree individual neurons as starting seeds with a biological variance tolerance.
+Employs Beam Search for parallel mapping expansion and Memoized Quick-Adding.
 """
 
 import pickle
@@ -23,7 +25,6 @@ import itertools
 DATA_DIR = Path("/Users/arnav/agcode/flywire/qual_challenge")
 GRAPHS_DIR = DATA_DIR / "processed" / "graph"
 DEGREES_DIR = DATA_DIR / "processed" / "degrees"
-MOTIFS_DIR = DATA_DIR / "data" / "neuron_properties" / "motifs_3neuron"
 OUTPUT_DIR = DATA_DIR / "results"
 
 DATASETS = ["BANC", "FAFB", "MANC", "MAOL", "MCNS"]
@@ -36,26 +37,30 @@ DATASET_PAIRS = {
 }
 
 PRIORITY_TRIOS = [
-    (3, 4, 5),  # MANC, MAOL, MCNS
-    (2, 3, 4),  # FAFB, MANC, MAOL
-    (1, 2, 3),  # BANC, FAFB, MANC
-    (2, 1, 4)
+    # (3, 4, 5),  # MANC, MAOL, MCNS
+    # (2, 3, 4),  # FAFB, MANC, MAOL
+    # (1, 2, 3),  # BANC, FAFB, MANC
+    (1, 2, 4)   # BANC, FAFB, MAOL
 ]
 
 CHECKPOINT_DIR = OUTPUT_DIR / "checkpoints"
-CHECKPOINT_INTERVAL = 10 
+
+# Search Parameters
+START_ID = 500
+END_ID = 1000 
+DEGREE_TOLERANCE = 0.20  # Allow 20% variance in global degrees to account for biological noise
+BEAM_WIDTH = 10           # Number of parallel subgraph branches to track simultaneously
 
 # ============================================================================
 # DATA LOADING
 # ============================================================================
 
 class DataLoader:
-    """Loads graphs, degrees, and seed motifs with caching."""
+    """Loads graphs and degrees with caching."""
     
     def __init__(self):
         self.graphs = {}
         self.degrees = {}
-        self.motifs = {}
         self._ensure_dirs()
     
     def _ensure_dirs(self):
@@ -101,48 +106,15 @@ class DataLoader:
         
         self.degrees[dataset_idx] = degree_dict
         return degree_dict
-    
-    def load_motifs(self, dataset_idx: int) -> List[Tuple[str, str, str, str]]:
-        if dataset_idx in self.motifs:
-            return self.motifs[dataset_idx]
-        
-        dataset_name = DATASET_PAIRS[dataset_idx]
-        motif_file = MOTIFS_DIR / f"{dataset_name.lower()}_motif.csv"
-        
-        if not motif_file.exists():
-            print(f"    ⚠ Motifs not found: {motif_file}")
-            return []
-        
-        print(f"  Loading {dataset_name} motifs...", flush=True)
-        df = pd.read_csv(motif_file)
-        df.columns = df.columns.str.strip().str.replace('﻿', '') 
-        
-        motifs = []
-        for _, row in df.iterrows():
-            try:
-                motif = (
-                    str(row['neuron_a_id']).strip(),
-                    str(row['neuron_b_id']).strip(),
-                    str(row['neuron_c_id']).strip(),
-                    str(row['type']).strip()
-                )
-                motifs.append(motif)
-            except Exception as e:
-                continue
-        
-        self.motifs[dataset_idx] = motifs
-        print(f"    ✓ {len(motifs)} seed motifs")
-        return motifs
 
 # ============================================================================
 # CORE ALGORITHM
 # ============================================================================
 
 class IsomorphicCircuitFinder:
-    """Main algorithm for finding isomorphic subgraphs using string name lookups."""
-    
     def __init__(self, loader: DataLoader):
         self.loader = loader
+        # Global trackers used ONLY by run() and save_results()
         self.best_result = None
         self.best_size = 0
     
@@ -154,29 +126,28 @@ class IsomorphicCircuitFinder:
             return False
 
     def can_add_to_mapping(
-        self,
-        n1: str, n2: str, n3: str,
+        self, n1: str, n2: str, n3: str,
         current_mapping: Dict[int, Tuple[str, str, str]],
         G1: ig.Graph, G2: ig.Graph, G3: ig.Graph
     ) -> bool:
-        for existing_mapping in current_mapping.values():
-            m1, m2, m3 = existing_mapping
-            
+        for m1, m2, m3 in current_mapping.values():
             if not (self._has_directed_edge(G1, m1, n1) == self._has_directed_edge(G2, m2, n2) == self._has_directed_edge(G3, m3, n3)):
                 return False
             if not (self._has_directed_edge(G1, n1, m1) == self._has_directed_edge(G2, n2, m2) == self._has_directed_edge(G3, n3, m3)):
                 return False
         return True
+
+    def _is_node_conflict(self, n1: str, n2: str, n3: str, mapping: Dict[int, Tuple[str, str, str]]) -> bool:
+        """Ensures a new seed doesn't try to map a neuron that is already assigned elsewhere in the circuit."""
+        nodes1 = {m[0] for m in mapping.values()}
+        nodes2 = {m[1] for m in mapping.values()}
+        nodes3 = {m[2] for m in mapping.values()}
+        return (n1 in nodes1) or (n2 in nodes2) or (n3 in nodes3)
     
     def find_highest_degree_candidates(
-        self,
-        current_nodes_1: Set[str],
-        current_nodes_2: Set[str],
-        current_nodes_3: Set[str],
+        self, current_nodes_1: Set[str], current_nodes_2: Set[str], current_nodes_3: Set[str],
         G1: ig.Graph, G2: ig.Graph, G3: ig.Graph,
-        deg_1: Dict[str, Tuple[int, int]],
-        deg_2: Dict[str, Tuple[int, int]],
-        deg_3: Dict[str, Tuple[int, int]]
+        deg_1: Dict[str, Tuple[int, int]], deg_2: Dict[str, Tuple[int, int]], deg_3: Dict[str, Tuple[int, int]]
     ) -> List[Tuple[str, str, str]]:
         neighbors_1, neighbors_2, neighbors_3 = set(), set(), set()
         
@@ -204,66 +175,101 @@ class IsomorphicCircuitFinder:
             except ValueError: pass
         neighbors_3 -= current_nodes_3
         
-        degree_to_nodes = defaultdict(lambda: [[], [], []])
-        for n1 in neighbors_1:
-            if n1 in deg_1: degree_to_nodes[deg_1[n1]][0].append(n1)
-        for n2 in neighbors_2:
-            if n2 in deg_2: degree_to_nodes[deg_2[n2]][1].append(n2)
-        for n3 in neighbors_3:
-            if n3 in deg_3: degree_to_nodes[deg_3[n3]][2].append(n3)
+        # Sort individual neighbors by global degree to prioritize structural hubs
+        n1_sorted = sorted(list(neighbors_1), key=lambda x: sum(deg_1.get(x, (0,0))), reverse=True)[:15]
+        n2_sorted = sorted(list(neighbors_2), key=lambda x: sum(deg_2.get(x, (0,0))), reverse=True)[:15]
+        n3_sorted = sorted(list(neighbors_3), key=lambda x: sum(deg_3.get(x, (0,0))), reverse=True)[:15]
         
         candidates = []
-        for deg_seq, (nodes1, nodes2, nodes3) in degree_to_nodes.items():
-            if nodes1 and nodes2 and nodes3:
-                total_deg = deg_seq[0] + deg_seq[1]
-                for n1 in nodes1[:5]:
-                    for n2 in nodes2[:5]:
-                        for n3 in nodes3[:5]:
-                            candidates.append((n1, n2, n3, total_deg))
+        for n1 in n1_sorted:
+            for n2 in n2_sorted:
+                for n3 in n3_sorted:
+                    total_weight = sum(deg_1.get(n1, (0,0))) + sum(deg_2.get(n2, (0,0))) + sum(deg_3.get(n3, (0,0)))
+                    candidates.append((n1, n2, n3, total_weight))
         
         candidates.sort(key=lambda x: x[3], reverse=True)
-        return [(n1, n2, n3) for n1, n2, n3, _ in candidates]
+        return [(c[0], c[1], c[2]) for c in candidates]
     
-    def expand_from_seed(
-        self,
-        seed_mapping: Dict[int, Tuple[str, str, str]],
+    def expand_with_beam_search(
+        self, start_mapping: Dict[int, Tuple[str, str, str]],
         G1: ig.Graph, G2: ig.Graph, G3: ig.Graph,
-        deg_1: Dict[str, Tuple[int, int]],
-        deg_2: Dict[str, Tuple[int, int]],
-        deg_3: Dict[str, Tuple[int, int]],
-        max_iterations: int = 500
+        deg_1: Dict[str, Tuple[int, int]], deg_2: Dict[str, Tuple[int, int]], deg_3: Dict[str, Tuple[int, int]],
+        beam_width: int = BEAM_WIDTH, max_iterations: int = 200
     ) -> Dict[int, Tuple[str, str, str]]:
-        current_mapping = seed_mapping.copy()
-        iterations = 0
-        no_progress_count = 0
+        """Maintains K parallel mappings to avoid getting stuck in greedy dead-ends."""
+        beam = [start_mapping.copy()]
+        best_overall = start_mapping.copy()
+        stall_count = 0
         
-        while iterations < max_iterations and no_progress_count < 3:
-            iterations += 1
-            current_nodes_1 = {m[0] for m in current_mapping.values()}
-            current_nodes_2 = {m[1] for m in current_mapping.values()}
-            current_nodes_3 = {m[2] for m in current_mapping.values()}
+        for iteration in range(max_iterations):
+            next_beam = []
             
-            candidates = self.find_highest_degree_candidates(
-                current_nodes_1, current_nodes_2, current_nodes_3,
-                G1, G2, G3, deg_1, deg_2, deg_3
-            )
+            for mapping in beam:
+                current_nodes_1 = {m[0] for m in mapping.values()}
+                current_nodes_2 = {m[1] for m in mapping.values()}
+                current_nodes_3 = {m[2] for m in mapping.values()}
+                
+                candidates = self.find_highest_degree_candidates(
+                    current_nodes_1, current_nodes_2, current_nodes_3,
+                    G1, G2, G3, deg_1, deg_2, deg_3
+                )
+                
+                expanded_this_mapping = False
+                for n1, n2, n3 in candidates[:30]:
+                    if self.can_add_to_mapping(n1, n2, n3, mapping, G1, G2, G3):
+                        new_map = mapping.copy()
+                        new_map[len(new_map)] = (n1, n2, n3)
+                        next_beam.append(new_map)
+                        expanded_this_mapping = True
+                
+                if not expanded_this_mapping:
+                    next_beam.append(mapping)
             
-            if not candidates:
-                break
+            # Hash states to remove redundant duplicate paths
+            unique_maps = {}
+            for m in next_beam:
+                sig = frozenset(m.values())
+                if sig not in unique_maps or len(m) > len(unique_maps[sig]):
+                    unique_maps[sig] = m
+                    
+            sorted_maps = sorted(unique_maps.values(), key=lambda m: len(m), reverse=True)
+            beam = sorted_maps[:beam_width]
             
-            expanded = False
-            for n1, n2, n3 in candidates[:50]:
-                if self.can_add_to_mapping(n1, n2, n3, current_mapping, G1, G2, G3):
-                    new_idx = len(current_mapping)
-                    current_mapping[new_idx] = (n1, n2, n3)
-                    expanded = True
-                    no_progress_count = 0
-                    break
-            
-            if not expanded:
-                no_progress_count += 1
-        
-        return current_mapping
+            # Track overall progress
+            if beam and len(beam[0]) > len(best_overall):
+                best_overall = beam[0]
+                stall_count = 0
+            else:
+                stall_count += 1
+                
+            if stall_count >= 3:
+                break  # Search has completely stalled across all beam branches
+                
+        return best_overall
+
+    def _load_checkpoint(self, dataset_triple: Tuple[int, int, int]) -> Optional[Dict[int, Tuple[str, str, str]]]:
+        checkpoint_file = CHECKPOINT_DIR / f"checkpoint_{dataset_triple[0]}_{dataset_triple[1]}_{dataset_triple[2]}.json"
+        if checkpoint_file.exists():
+            try:
+                with open(checkpoint_file, 'r') as f:
+                    data = json.load(f)
+                    return {int(k): tuple(v) for k, v in data['mapping'].items()}
+            except Exception as e:
+                print(f"    ⚠ Failed to load checkpoint: {e}")
+        return None
+
+    def _save_checkpoint(self, dataset_triple: Tuple[int, int, int], mapping: Dict[int, Tuple[str, str, str]]):
+        checkpoint_file = CHECKPOINT_DIR / f"checkpoint_{dataset_triple[0]}_{dataset_triple[1]}_{dataset_triple[2]}.json"
+        try:
+            with open(checkpoint_file, 'w') as f:
+                json.dump({
+                    'timestamp': datetime.now().isoformat(),
+                    'dataset_triple': dataset_triple,
+                    'size': len(mapping),
+                    'mapping': mapping
+                }, f, indent=2)
+        except Exception as e:
+            pass
     
     def find_circuit(self, dataset_triple: Tuple[int, int, int]) -> Optional[Dict]:
         d1, d2, d3 = dataset_triple
@@ -277,88 +283,94 @@ class IsomorphicCircuitFinder:
             G1, G2, G3 = graphs[d1], graphs[d2], graphs[d3]
             deg_1, deg_2, deg_3 = degrees[d1], degrees[d2], degrees[d3]
             
-            motifs_1 = self.loader.load_motifs(d1)
-            if not motifs_1: return None
-            
-            best_result = None
-            best_size = 0
-            
-            # Slice the seed search to a manageable number of diverse starting points to optimize speed
-            for seed_idx, (a1, b1, c1, motif_type) in enumerate(motifs_1[:30]):
-                if seed_idx % 3 == 0:
-                    print(f"  Progress: {seed_idx}/{min(30, len(motifs_1))} seeds tracked...", flush=True)
+            # LOCAL trackers to prevent overriding global search states
+            local_best_size = 0
+            local_best_mapping = {}
+
+            # 1. Boot up from checkpoint memory
+            existing_mapping = self._load_checkpoint(dataset_triple)
+            if existing_mapping:
+                local_best_mapping = existing_mapping.copy()
+                local_best_size = len(existing_mapping)
+                print(f"  Resuming from checkpoint with {local_best_size} nodes...")
                 
-                motifs_d2 = self._load_motifs_by_type(d2, motif_type)[:20]
-                motifs_d3 = self._load_motifs_by_type(d3, motif_type)[:20]
+                # Push the checkpoint through the beam search immediately to see if it can grow
+                result = self.expand_with_beam_search(local_best_mapping, G1, G2, G3, deg_1, deg_2, deg_3)
+                if len(result) > local_best_size:
+                    local_best_mapping = result.copy()
+                    local_best_size = len(result)
+                    print(f"    ✓ Beam Search extended checkpoint to: {local_best_size} nodes!")
+                    self._save_checkpoint(dataset_triple, result)
+
+            # 2. Extract Top 1-node seeds by maximum degree
+            print(f"  Sourcing top {START_ID}-{END_ID} max-degree neurons as seeds (Tolerance: ±{DEGREE_TOLERANCE*100}%)...")
+            top_x_seeds_d1 = sorted(deg_1.keys(), key=lambda k: deg_1[k][0] + deg_1[k][1], reverse=True)[START_ID:END_ID]
+
+            for seed_idx, n1 in enumerate(top_x_seeds_d1):
+                if seed_idx % 15 == 0:
+                    print(f"  Progress: {seed_idx}/{END_ID-START_ID} seeds tracked...", flush=True)
+
+                t_in, t_out = deg_1[n1]
+                t_tot = t_in + t_out
                 
-                struct_1 = self._get_motif_structure(a1, b1, c1, G1)
-                
-                for a2, b2, c2, _ in motifs_d2:
-                    for a3, b3, c3, _ in motifs_d3:
+                def get_similar_nodes(deg_dict, top_k=5):
+                    cands = []
+                    for n, (d_in, d_out) in deg_dict.items():
+                        d_tot = d_in + d_out
+                        if abs(d_tot - t_tot) <= (t_tot * DEGREE_TOLERANCE):
+                            dist = abs(d_in - t_in) + abs(d_out - t_out)
+                            cands.append((n, dist))
+                    cands.sort(key=lambda x: x[1])
+                    return [c[0] for c in cands[:top_k]]
+
+                cand_2 = get_similar_nodes(deg_2)
+                if not cand_2: continue
+                cand_3 = get_similar_nodes(deg_3)
+                if not cand_3: continue
+
+                for n2 in cand_2:
+                    for n3 in cand_3:
+                        seed_tuple = (n1, n2, n3)
                         
-                        # Loop through internal structural mapping combinations explicitly 
-                        # to remove ordering dependency false negatives
-                        for p2 in itertools.permutations([a2, b2, c2]):
-                            for p3 in itertools.permutations([a3, b3, c3]):
+                        # --- MEMOIZATION & QUICK ADD LOGIC ---
+                        if seed_tuple in local_best_mapping.values():
+                            continue # Seed is already part of the master circuit. Skip.
+                            
+                        if local_best_mapping and not self._is_node_conflict(n1, n2, n3, local_best_mapping):
+                            if self.can_add_to_mapping(n1, n2, n3, local_best_mapping, G1, G2, G3):
+                                # SAFELY create a temporary extended map to avoid corrupting the dictionary
+                                temp_mapping = local_best_mapping.copy()
+                                temp_mapping[len(temp_mapping)] = seed_tuple
+                                print(f"    ⚡ Quick Add! Seed fit perfectly into existing master circuit. Size: {len(temp_mapping)}")
                                 
-                                seed_mapping = {
-                                    0: (a1, p2[0], p3[0]),
-                                    1: (b1, p2[1], p3[1]),
-                                    2: (c1, p2[2], p3[2])
-                                }
-                                
-                                # Quick validation that seed permutation is legal before expanding
-                                if not self.can_add_to_mapping_initial(seed_mapping, G1, G2, G3):
-                                    continue
-                                    
-                                result = self.expand_from_seed(seed_mapping, G1, G2, G3, deg_1, deg_2, deg_3)
-                                
-                                if len(result) > best_size:
-                                    best_size = len(result)
-                                    best_result = {
-                                        'mapping': result, 'size': len(result), 'seed_idx': seed_idx,
-                                        'motif_type': motif_type, 'datasets': dataset_names, 'dataset_indices': dataset_triple
-                                    }
-                                    print(f"    ✓ New best: {best_size} nodes aligned!")
-            return best_result
+                                result = self.expand_with_beam_search(temp_mapping, G1, G2, G3, deg_1, deg_2, deg_3)
+                                if len(result) > local_best_size:
+                                    local_best_size = len(result)
+                                    local_best_mapping = result.copy()
+                                    self._save_checkpoint(dataset_triple, result)
+                                    print(f"    ✓ Expanded after Quick Add to: {local_best_size} nodes!")
+                                continue 
+                        
+                        # --- STANDARD BEAM SEARCH --- 
+                        seed_mapping = {0: seed_tuple}
+                        result = self.expand_with_beam_search(seed_mapping, G1, G2, G3, deg_1, deg_2, deg_3)
+                        
+                        if len(result) > local_best_size:
+                            local_best_size = len(result)
+                            local_best_mapping = result.copy()
+                            self._save_checkpoint(dataset_triple, result)
+                            print(f"    ✓ New standard seed breached best: {local_best_size} nodes aligned!")
+
+            if local_best_size > 0:
+                return {
+                    'mapping': local_best_mapping, 'size': local_best_size,
+                    'datasets': dataset_names, 'dataset_indices': dataset_triple
+                }
+            return None
+            
         except Exception as e:
             traceback.print_exc()
             return None
-
-    def can_add_to_mapping_initial(self, seed_mapping: Dict[int, Tuple[str, str, str]], G1: ig.Graph, G2: ig.Graph, G3: ig.Graph) -> bool:
-        # Mini isomorphism sanity check on the 3 seed nodes themselves
-        for i in range(3):
-            for j in range(3):
-                if i == j: continue
-                m1, m2, m3 = seed_mapping[i]
-                n1, n2, n3 = seed_mapping[j]
-                if not (self._has_directed_edge(G1, m1, n1) == self._has_directed_edge(G2, m2, n2) == self._has_directed_edge(G3, m3, n3)):
-                    return False
-        return True
-
-    def _get_motif_structure(self, n1: str, n2: str, n3: str, graph: ig.Graph) -> Tuple:
-        return (
-            self._has_directed_edge(graph, n1, n2),
-            self._has_directed_edge(graph, n1, n3),
-            self._has_directed_edge(graph, n2, n1),
-            self._has_directed_edge(graph, n2, n3),
-            self._has_directed_edge(graph, n3, n1),
-            self._has_directed_edge(graph, n3, n2)
-        )
-
-    def _load_motifs_by_type(self, dataset_idx: int, motif_type: str) -> List[Tuple]:
-        dataset_name = DATASET_PAIRS[dataset_idx]
-        motif_file = MOTIFS_DIR / f"{dataset_name.lower()}_motif.csv"
-        if not motif_file.exists(): return []
-        try:
-            df = pd.read_csv(motif_file)
-            df.columns = df.columns.str.strip().str.replace('﻿', '')
-            motifs = []
-            for _, row in df.iterrows():
-                if str(row['type']).strip() == motif_type:
-                    motifs.append((str(row['neuron_a_id']).strip(), str(row['neuron_b_id']).strip(), str(row['neuron_c_id']).strip(), motif_type))
-            return motifs
-        except Exception: return []
 
     def run(self):
         all_results = []
@@ -366,6 +378,9 @@ class IsomorphicCircuitFinder:
             result = self.find_circuit(dataset_triple)
             if result:
                 all_results.append(result)
+                print(f"Completed Trio {result['datasets']} -> Best Size: {result['size']}")
+                
+                # Global comparison strictly contained to the top-level orchestrator
                 if result['size'] > self.best_size:
                     self.best_size = result['size']
                     self.best_result = result
@@ -374,7 +389,9 @@ class IsomorphicCircuitFinder:
     def save_results(self, results: List[Dict]):
         if not results or not self.best_result: 
             print("✗ No results exceeded seed limits.")
+            self._write_summary(results, success=False)
             return
+            
         best = self.best_result
         mapping_data = []
         for node_id, (n1, n2, n3) in best['mapping'].items():
@@ -384,8 +401,33 @@ class IsomorphicCircuitFinder:
                 DATASET_PAIRS[best['dataset_indices'][1]]: n2,
                 DATASET_PAIRS[best['dataset_indices'][2]]: n3,
             })
+            
         pd.DataFrame(mapping_data).to_csv(OUTPUT_DIR / "solution.csv", index=False)
         print(f"\n✓ Saved solution file detailing {best['size']} neurons.")
+        self._write_summary(results, success=True)
+
+    def _write_summary(self, results: List[Dict], success: bool):
+        summary_file = OUTPUT_DIR / "summary.txt"
+        with open(summary_file, 'w') as f:
+            f.write("==================================================\n")
+            f.write(" ISOMORPHIC CIRCUIT FINDER SUMMARY\n")
+            f.write(f" Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write("==================================================\n\n")
+            
+            if not success:
+                f.write("Result: No valid isomorphic circuits discovered.\n")
+                return
+                
+            f.write("--- BEST SOLUTION ---\n")
+            best = self.best_result
+            f.write(f"Datasets   : {' -> '.join(best['datasets'])}\n")
+            f.write(f"Circuit Size: {best['size']} nodes\n\n")
+            
+            f.write("--- ALL TRIO RESULTS ---\n")
+            for r in sorted(results, key=lambda x: x['size'], reverse=True):
+                f.write(f"[{' - '.join(r['datasets'])}] Max Size: {r['size']}\n")
+        
+        print(f"✓ Saved run summary to: {summary_file}")
 
 if __name__ == "__main__":
     loader = DataLoader()
