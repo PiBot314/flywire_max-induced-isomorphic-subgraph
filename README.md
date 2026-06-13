@@ -60,6 +60,70 @@ flowchart TD
     Q -- Yes --> R[Export solution.csv]
     R --> S[verify_solution.py:\nrebuild subgraphs\ncheck isomorphism\ncheck weak connectivity]
 ```
+---
+
+## Key Assumptions
+
+1. **Degree as a proxy for structural equivalence** — neurons with similar total degree (±20%) are treated as plausible matches. Assumes hub neurons play equivalent roles across species/datasets.
+2. **Hub-adjacent seeds are more productive** — seeds are drawn from rank 1–500, not top-1. The very highest-degree neurons are assumed to be outlier super-hubs unlikely to have exact structural counterparts elsewhere.
+3. **Locally connected growth is sufficient** — expansion only considers neighbors of already-mapped nodes. Assumes the target circuit is locally cohesive, not scattered.
+4. **Stalling = convergence** — 3 consecutive iterations with no beam improvement is treated as the search having exhausted useful expansions. May terminate early on sparse graphs.
+5. **One trio at a time** — only one dataset combination is actively searched per run (currently BANC+FAFB+MAOL). Other combinations are explored in separate runs.
+6. **Edge weights carry no structural information** — synapse counts are discarded; only binary edge presence is used, as required by the challenge.
+
+```mermaid
+flowchart LR
+    subgraph Assumptions
+        A1[Degree similarity\nproxies structural role]
+        A2[Hub-adjacent seeds\nrank 1-500]
+        A3[Circuits are\nlocally cohesive]
+        A4[Stall after 3 iters\nmeans convergence]
+        A5[One trio\nper run]
+        A6[Ignore edge\nweights]
+    end
+    A1 & A2 --> S[Seed Triplet Formation]
+    A3 & A4 --> BS[Beam Search]
+    A5 --> R[Run Configuration]
+    A6 --> G[Graph Representation]
+```
+
+---
+
+## Solution Strengths vs. Challenge Requirements
+
+### Correctness of Formulation
+- **Unweighted directed graphs** — edge weights (synapse counts) are explicitly ignored; only edge existence and direction are used, exactly as required.
+- **Strict induced subgraph isomorphism** — `can_add_to_mapping()` checks every pairwise directed edge in both directions before accepting a new node.
+- **Directionality preserved** — both `A→B` and `B→A` are checked independently for every pair.
+- **Weak connectivity enforced** — `verify_solution.py` explicitly builds the circuit graph and checks it is weakly connected.
+
+### Methodological Rigor
+- **Independent verifier** — `verify_solution.py` is a fully separate script that reloads graphs from scratch and re-validates end-to-end, guarding against self-confirming bugs.
+- **Biological noise tolerance** — the ±20% degree tolerance is a principled, documented design choice reflecting real connectome variance.
+- **No same-region assumption** — neuron matching is purely structural, in line with the explicit challenge clarification.
+- **Checkpoint/resume system** — progress is persisted to JSON after every improvement, enabling reproducible restarts.
+
+### Search Quality
+- **Beam search over greedy** — K=10 parallel mappings avoids permanent entrapment at locally optimal but globally suboptimal nodes.
+- **Hub-first seeding** — biases discovery toward structurally rich, well-connected circuits.
+- **Degree-sorted candidate expansion** — neighbor triplets ranked by combined global degree before isomorphism checking.
+---
+
+## 🔬 The Evolution of the Algorithm
+
+Solving this challenge required navigating the clash between strict theoretical mathematics and noisy biological data. The architecture evolved through two distinct phases.
+
+### Phase 1: The Initial Attempt (Motif Extraction & Greedy Search)
+**The Strategy:** The initial approach relied on extracting predefined 3-node motifs (e.g., Feed-Forward Loops) to use as guaranteed isomorphic "seeds." From there, the algorithm used a **Greedy Search**, looking at all neighbors, filtering by *exact* global degree matches (`deg_A == deg_B == deg_C`), picking the single highest-degree candidate, and permanently adding it to the mapping.
+
+**Why it Failed:**
+1. **The Biological Hub Trap:** Requiring an *exact* global degree match fails in connectomics due to reconstruction artifacts and biological variance. A functionally identical hub neuron might have 4,500 synapses in Brain A, but 4,450 in Brain B. 
+2. **The Greedy Dead-End:** By permanently committing to the "best" node at step 2, the algorithm suffered from tunnel vision. If that path hit a topological dead-end at step 5, the entire search collapsed.
+3. **String Lookup Bottlenecks:** Evaluating thousands of candidates using 64-bit string IDs (e.g., `graph.get_eid("720575941350274352")`) required millions of Python dictionary lookups, bringing execution to a crawl.
+4. **The "Phantom Match" Bug:** The strict "induced" requirement meant the *absence* of edges also had to match perfectly. Early iterations accidentally allowed nodes with *zero* connections to the master circuit to be added because "0 edges perfectly matches 0 edges", resulting in mathematically valid but biologically useless disjointed graphs.
+
+### Phase 2: The Final Breakthrough (Beam Search & Signature Intersection)
+To push past the initial bottlenecks, the algorithm was entirely rewritten to leverage **Topological Signatures** and **Parallel Pathfinding**. We abandoned the rigid 3-node motifs and instead started from single, high-degree anchors, allowing the algorithm to dynamically "grow" the circuit using strict C-speed validation rules.
 
 ---
 
@@ -130,54 +194,6 @@ flowchart TD
 | **Beam Search** | Tracks K=10 parallel mappings simultaneously to escape greedy dead-ends |
 | **Isomorphism Check** | Verifies every pairwise edge direction matches across all 3 graphs before accepting a node |
 | **Connectivity** | Final circuit must be weakly connected (beyond pure isomorphism) |
-
----
-
-## Key Assumptions
-
-1. **Degree as a proxy for structural equivalence** — neurons with similar total degree (±20%) are treated as plausible matches. Assumes hub neurons play equivalent roles across species/datasets.
-2. **Hub-adjacent seeds are more productive** — seeds are drawn from rank 1–500, not top-1. The very highest-degree neurons are assumed to be outlier super-hubs unlikely to have exact structural counterparts elsewhere.
-3. **Locally connected growth is sufficient** — expansion only considers neighbors of already-mapped nodes. Assumes the target circuit is locally cohesive, not scattered.
-4. **Stalling = convergence** — 3 consecutive iterations with no beam improvement is treated as the search having exhausted useful expansions. May terminate early on sparse graphs.
-5. **One trio at a time** — only one dataset combination is actively searched per run (currently BANC+FAFB+MAOL). Other combinations are explored in separate runs.
-6. **Edge weights carry no structural information** — synapse counts are discarded; only binary edge presence is used, as required by the challenge.
-
-```mermaid
-flowchart LR
-    subgraph Assumptions
-        A1[Degree similarity\nproxies structural role]
-        A2[Hub-adjacent seeds\nrank 1-500]
-        A3[Circuits are\nlocally cohesive]
-        A4[Stall after 3 iters\nmeans convergence]
-        A5[One trio\nper run]
-        A6[Ignore edge\nweights]
-    end
-    A1 & A2 --> S[Seed Triplet Formation]
-    A3 & A4 --> BS[Beam Search]
-    A5 --> R[Run Configuration]
-    A6 --> G[Graph Representation]
-```
-
----
-
-## Solution Strengths vs. Challenge Requirements
-
-### Correctness of Formulation
-- **Unweighted directed graphs** — edge weights (synapse counts) are explicitly ignored; only edge existence and direction are used, exactly as required.
-- **Strict induced subgraph isomorphism** — `can_add_to_mapping()` checks every pairwise directed edge in both directions before accepting a new node.
-- **Directionality preserved** — both `A→B` and `B→A` are checked independently for every pair.
-- **Weak connectivity enforced** — `verify_solution.py` explicitly builds the circuit graph and checks it is weakly connected.
-
-### Methodological Rigor
-- **Independent verifier** — `verify_solution.py` is a fully separate script that reloads graphs from scratch and re-validates end-to-end, guarding against self-confirming bugs.
-- **Biological noise tolerance** — the ±20% degree tolerance is a principled, documented design choice reflecting real connectome variance.
-- **No same-region assumption** — neuron matching is purely structural, in line with the explicit challenge clarification.
-- **Checkpoint/resume system** — progress is persisted to JSON after every improvement, enabling reproducible restarts.
-
-### Search Quality
-- **Beam search over greedy** — K=10 parallel mappings avoids permanent entrapment at locally optimal but globally suboptimal nodes.
-- **Hub-first seeding** — biases discovery toward structurally rich, well-connected circuits.
-- **Degree-sorted candidate expansion** — neighbor triplets ranked by combined global degree before isomorphism checking.
 
 ---
 
