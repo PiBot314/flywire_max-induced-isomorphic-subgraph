@@ -1,3 +1,6 @@
+> [!WARNING]
+> *Work in progress:* The final algorithm did not converge on a large-scale isomorphic circuit within the available runtime. The analysis and results presented here are based on a 5-node circuit obtained during an earlier validation run. Given the limited sample size, definitive biological conclusions are constrained and representative only.
+
 # flywirequal-find-max-isomorphic-subgraph
 
 Find the largest isomorphic neuronal circuit shared across 3 of 5 FlyWire connectome datasets (BANC, FAFB, MANC, MAOL, MCNS).
