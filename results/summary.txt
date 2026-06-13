@@ -1,11 +1,11 @@
 ==================================================
  ISOMORPHIC CIRCUIT FINDER SUMMARY
- Generated: 2026-06-13 01:23:46
+ Generated: 2026-06-13 07:05:28
 ==================================================
 
 --- BEST SOLUTION ---
 Datasets   : BANC -> FAFB -> MAOL
-Circuit Size: 35 nodes
+Circuit Size: 58 nodes
 
 --- ALL TRIO RESULTS ---
-[BANC - FAFB - MAOL] Max Size: 35
+[BANC - FAFB - MAOL] Max Size: 58

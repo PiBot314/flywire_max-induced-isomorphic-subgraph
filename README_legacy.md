@@ -11,11 +11,6 @@ This pipeline discovers the largest isomorphic directed induced subgraph (circui
 
 All other 9 possible combinations have zero neuron overlap, dramatically simplifying the search space.
 
-### Circuit Discovery Status
-✅ **Isomorphic 4-node circuits found across MANC-MAOL-MCNS**
-- Hundreds of isomorphic motifs of size 4 identified
-- Search continuing for larger circuits (sizes 5, 6, 7)
-
 ## Pipeline Architecture
 
 ### Stage 1: Data Preparation (`prepare_data.py`) ✅ COMPLETED
@@ -28,12 +23,12 @@ All other 9 possible combinations have zero neuron overlap, dramatically simplif
   - MAOL: 6,484,936 edges, 51,669 neurons
   - MCNS: 6,239,112 edges, 165,820 neurons
   
-- Creates NetworkX DiGraph structures
+- Creates igraph structures
 - Normalizes neuron identifiers (standard FlyWire 64-bit format)
 - Tracks neuron presence/absence per dataset
 
 **Output:**
-- `processed/graphs.pkl` - NetworkX DiGraph objects (428 MB)
+- `processed/graphs.pkl` - igraph objects (428 MB)
 - `processed/presence_dict.pkl` - Neuron → dataset mappings (6.7 MB)
 - `processed/datasets.pkl` - Raw edge lists (297 MB)
 - `processed/presence_matrix.csv` - Neuron presence/absence matrix (9.6 MB)
