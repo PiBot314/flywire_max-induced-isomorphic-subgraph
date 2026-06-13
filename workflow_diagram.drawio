@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-06-13T02:17:00.000Z" agent="5.0" version="21.0.0">
+  <diagram name="FlyWire Analysis Workflow" id="workflow">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" page="0" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="850" pageHeight="1100">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="2" value="FlyWire Isomorphic Circuit Analysis Workflow" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="200" y="20" width="600" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- Phase 1: Data Loading -->
+        <mxCell id="3" value="Phase 1: Data Loading" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="100" width="200" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="4" value="Load Graphs&#10;(BANC, FAFB, MAOL)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6" vertex="1" parent="1">
+          <mxGeometry x="100" y="180" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="5" value="Load Degree Data&#10;(in/out degrees)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6" vertex="1" parent="1">
+          <mxGeometry x="100" y="240" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="6" value="Load Seed Motifs&#10;(3-node patterns)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6" vertex="1" parent="1">
+          <mxGeometry x="100" y="300" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- Phase 2: Circuit Discovery -->
+        <mxCell id="7" value="Phase 2: Circuit Discovery" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="400" y="100" width="200" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="8" value="Match Seed Motifs&#10;Across Datasets" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="400" y="180" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="9" value="Initialize Mapping&#10;(3 neurons)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="400" y="240" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="10" value="Beam Search Expansion&#10;(K=10 parallel paths)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="400" y="300" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="11" value="Verify Isomorphism&#10;& Connectivity" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="440" y="370" width="120" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- Phase 3: Analysis -->
+        <mxCell id="12" value="Phase 3: Topology Analysis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="700" y="100" width="200" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="13" value="Extract Subgraphs&#10;(induced circuits)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="700" y="180" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="14" value="Calculate Metrics&#10;(degree, density, motifs)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="700" y="240" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="15" value="Identify Hub Neurons&#10;& Components" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="700" y="300" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- Phase 4: Visualization -->
+        <mxCell id="16" value="Phase 4: Visualization" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="480" width="200" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="17" value="Network Graph&#10;(force-directed layout)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="100" y="560" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="18" value="Degree Distribution&#10;(color-coded nodes)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="100" y="620" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- Phase 5: Biological Analysis -->
+        <mxCell id="19" value="Phase 5: Biological Analysis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="400" y="480" width="200" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="20" value="Query FlyWire Codex&#10;(cell types, NT)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00" vertex="1" parent="1">
+          <mxGeometry x="400" y="560" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="21" value="3D Mesh Visualization&#10;(Neuroglancer)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00" vertex="1" parent="1">
+          <mxGeometry x="400" y="620" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="22" value="Functional Hypothesis&#10;(circuit role)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00" vertex="1" parent="1">
+          <mxGeometry x="400" y="680" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- Phase 6: Documentation -->
+        <mxCell id="23" value="Phase 6: Scientific Summary" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="700" y="480" width="200" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="24" value="Write Summary&#10;(max 1 page)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="700" y="560" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="25" value="Include Visualizations&#10;& Citations" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="700" y="620" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="26" value="Submit to FlyWire" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="700" y="680" width="200" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrows Phase 1 -->
+        <mxCell id="27" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="3" target="4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="28" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="4" target="5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="29" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="5" target="6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrow Phase 1 to Phase 2 -->
+        <mxCell id="30" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="6" target="8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrows Phase 2 -->
+        <mxCell id="31" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="7" target="8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="32" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="8" target="9">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="33" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="9" target="10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="34" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="10" target="11">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrow Phase 2 to Phase 3 -->
+        <mxCell id="35" value="Valid" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="11" target="13">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Loop back arrow -->
+        <mxCell id="36" value="Invalid" style="endArrow=classic;html=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;curved=1;" edge="1" parent="1" source="11" target="10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrows Phase 3 -->
+        <mxCell id="37" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="12" target="13">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="38" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="13" target="14">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="39" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="14" target="15">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrows to Phase 4, 5, 6 -->
+        <mxCell id="40" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="15" target="16">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="41" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="15" target="19">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="42" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="15" target="23">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrows Phase 4 -->
+        <mxCell id="43" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="16" target="17">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="44" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="17" target="18">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrows Phase 5 -->
+        <mxCell id="45" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="19" target="20">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="46" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="20" target="21">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="47" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="21" target="22">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrows Phase 6 -->
+        <mxCell id="48" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="23" target="24">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="49" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="24" target="25">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="50" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="25" target="26">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Convergence arrows to final submission -->
+        <mxCell id="51" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;curved=1;" edge="1" parent="1" source="18" target="26">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="52" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;curved=1;" edge="1" parent="1" source="22" target="26">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

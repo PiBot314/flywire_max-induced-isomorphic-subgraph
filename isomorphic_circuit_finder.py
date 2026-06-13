@@ -123,7 +123,7 @@ class IsomorphicCircuitFinder:
         self.vid_cache = {}
 
     def _get_vid(self, graph: ig.Graph, name: str) -> int:
-        if (debug==1):
+        if (debug==2):
             print(f"function = get_vid")
         g_id = id(graph)
         if g_id not in self.vid_cache:
@@ -140,7 +140,7 @@ class IsomorphicCircuitFinder:
         current_mapping: Dict[int, Tuple[str, str, str]],
         G1: ig.Graph, G2: ig.Graph, G3: ig.Graph
     ) -> bool:
-        if (debug==1):
+        if (debug==2):
             print(f"function = can_add_to_mapping")
 
         if not current_mapping:

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-06-13T02:18:00.000Z" agent="5.0" version="21.0.0">
+  <diagram name="Neuron Chain Examples" id="chains">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" page="0" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="2" value="Sample Neuron Circuit Patterns" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="400" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- Example 1: Linear Chain -->
+        <mxCell id="3" value="1. Linear Feedforward Chain" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="50" y="80" width="250" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="4" value="Sensory&#10;Neuron" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="50" y="120" width="100" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="5" value="Inter-&#10;neuron 1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="200" y="120" width="100" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="6" value="Inter-&#10;neuron 2" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="350" y="120" width="100" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="7" value="Motor&#10;Neuron" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="500" y="120" width="100" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="8" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2" edge="1" parent="1" source="4" target="5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="9" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2" edge="1" parent="1" source="5" target="6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="10" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2" edge="1" parent="1" source="6" target="7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Example 2: Reciprocal Connection -->
+        <mxCell id="11" value="2. Reciprocal (Bidirectional) Connection" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="50" y="240" width="350" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="12" value="Neuron A&#10;(Hub)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="100" y="280" width="100" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="13" value="Neuron B&#10;(Hub)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="300" y="280" width="100" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="14" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.3;strokeWidth=2;curved=1" edge="1" parent="1" source="12" target="13">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="15" value="" style="endArrow=classic;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.7;strokeWidth=2;curved=1" edge="1" parent="1" source="13" target="12">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="16" value="Mutual&#10;Feedback" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="180" y="300" width="60" height="30" as="geometry"/>
+        </mxCell>
+        
+        <!-- Example 3: Feedforward Loop -->
+        <mxCell id="17" value="3. Feedforward Loop (3-node motif)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="50" y="400" width="350" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="18" value="Input&#10;Neuron" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="150" y="440" width="100" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="19" value="Inter-&#10;mediate" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="300" y="440" width="100" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="20" value="Output&#10;Neuron" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="225" y="580" width="100" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="21" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2" edge="1" parent="1" source="18" target="19">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="22" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeWidth=2" edge="1" parent="1" source="18" target="20">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="23" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=1;entryY=0;strokeWidth=2" edge="1" parent="1" source="19" target="20">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="24" value="Direct" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="160" y="520" width="40" height="20" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="25" value="Indirect" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="310" y="520" width="40" height="20" as="geometry"/>
+        </mxCell>
+        
+        <!-- Example 4: Hub and Spoke -->
+        <mxCell id="26" value="4. Hub-and-Spoke Pattern" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="650" y="80" width="300" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="27" value="Hub&#10;Neuron&#10;(degree=6)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e74c3c;strokeColor=#c0392b;fontColor=#ffffff;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="750" y="180" width="100" height="100" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="28" value="N1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#95a5a6;strokeColor=#7f8c8d" vertex="1" parent="1">
+          <mxGeometry x="650" y="120" width="60" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="29" value="N2" style="ellipse;whiteSpace=wrap;html=1;fillColor=#95a5a6;strokeColor=#7f8c8d" vertex="1" parent="1">
+          <mxGeometry x="770" y="100" width="60" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="30" value="N3" style="ellipse;whiteSpace=wrap;html=1;fillColor=#95a5a6;strokeColor=#7f8c8d" vertex="1" parent="1">
+          <mxGeometry x="890" y="120" width="60" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="31" value="N4" style="ellipse;whiteSpace=wrap;html=1;fillColor=#95a5a6;strokeColor=#7f8c8d" vertex="1" parent="1">
+          <mxGeometry x="650" y="260" width="60" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="32" value="N5" style="ellipse;whiteSpace=wrap;html=1;fillColor=#95a5a6;strokeColor=#7f8c8d" vertex="1" parent="1">
+          <mxGeometry x="770" y="300" width="60" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="33" value="N6" style="ellipse;whiteSpace=wrap;html=1;fillColor=#95a5a6;strokeColor=#7f8c8d" vertex="1" parent="1">
+          <mxGeometry x="890" y="260" width="60" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="34" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.3;strokeWidth=2" edge="1" parent="1" source="28" target="27">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="35" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeWidth=2" edge="1" parent="1" source="29" target="27">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="36" value="" style="endArrow=classic;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.3;strokeWidth=2" edge="1" parent="1" source="30" target="27">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="37" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.7;strokeWidth=2" edge="1" parent="1" source="31" target="27">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="38" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;strokeWidth=2" edge="1" parent="1" source="32" target="27">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="39" value="" style="endArrow=classic;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.7;strokeWidth=2" edge="1" parent="1" source="33" target="27">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <!-- Example 5: Feedback Loop -->
+        <mxCell id="40" value="5. Feedback Loop (Recurrent Circuit)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="650" y="400" width="350" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="41" value="Neuron A" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="700" y="450" width="80" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="42" value="Neuron B" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="820" y="450" width="80" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="43" value="Neuron C" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="760" y="560" width="80" height="80" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="44" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2" edge="1" parent="1" source="41" target="42">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="45" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=1;entryY=0;strokeWidth=2" edge="1" parent="1" source="42" target="43">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="46" value="" style="endArrow=classic;html=1;exitX=0;exitY=0;entryX=0.5;entryY=1;strokeWidth=2" edge="1" parent="1" source="43" target="41">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="47" value="Recurrent&#10;Feedback" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="680" y="540" width="60" height="30" as="geometry"/>
+        </mxCell>
+        
+        <!-- Example 6: Disconnected (Invalid) -->
+        <mxCell id="48" value="6. Disconnected Pattern (INVALID)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#c0392b" vertex="1" parent="1">
+          <mxGeometry x="50" y="700" width="350" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="49" value="Connected&#10;Component" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;dashed=1;dashPattern=5 5" vertex="1" parent="1">
+          <mxGeometry x="50" y="740" width="200" height="120" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="50" value="N1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="70" y="760" width="60" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="51" value="N2" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="160" y="760" width="60" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="52" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2" edge="1" parent="1" source="50" target="51">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="53" value="Isolated&#10;Neurons" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;dashPattern=5 5" vertex="1" parent="1">
+          <mxGeometry x="300" y="740" width="200" height="120" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="54" value="N3" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ecf0f1;strokeColor=#95a5a6" vertex="1" parent="1">
+          <mxGeometry x="320" y="760" width="60" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="55" value="N4" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ecf0f1;strokeColor=#95a5a6" vertex="1" parent="1">
+          <mxGeometry x="410" y="760" width="60" height="60" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="56" value="NO&#10;EDGES" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#c0392b" vertex="1" parent="1">
+          <mxGeometry x="350" y="820" width="80" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="57" value="NOT WEAKLY&#10;CONNECTED" style="text;html=1;strokeColor=#c0392b;fillColor=#f8cecc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="150" y="880" width="150" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- Legend -->
+        <mxCell id="58" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="650" y="700" width="100" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="59" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="650" y="740" width="40" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="60" value="Sensory/Input Neuron" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="700" y="745" width="150" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="61" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="650" y="790" width="40" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="62" value="Interneuron" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="700" y="795" width="150" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="63" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="650" y="840" width="40" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="64" value="Motor/Output Neuron" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="700" y="845" width="150" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="65" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="850" y="740" width="40" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="66" value="Hub Neuron (high degree)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="900" y="745" width="180" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="67" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ecf0f1;strokeColor=#95a5a6" vertex="1" parent="1">
+          <mxGeometry x="850" y="790" width="40" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="68" value="Isolated Neuron (degree=0)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="900" y="795" width="180" height="30" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="69" value="" style="endArrow=classic;html=1;strokeWidth=2" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="850" y="850" as="sourcePoint"/>
+            <mxPoint x="890" y="850" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="70" value="Directed Connection (synapse)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="900" y="835" width="200" height="30" as="geometry"/>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
