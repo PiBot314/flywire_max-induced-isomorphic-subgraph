@@ -1,6 +1,7 @@
 # FLYWIRE CHALLENGE
 
-*My final algorithm does not function as intended, so I used one of the smaller solutions I found earlier.*
+> [!WARNING]
+> *Work in progress:* The final algorithm did not converge on a large-scale isomorphic circuit within the available runtime. The analysis and results presented here are based on a 5-node circuit obtained during an earlier validation run. Given the limited sample size, definitive biological conclusions are constrained and representative only.
 
 ## Find largest induced isomorphic subgraph between 3 of the 5 datasets
 Induced Isomorphic Subgraph is the set of vertices and edges that form the same structure between the vertices and edges included, they need not form an exact match to the next set in terms of in degree and out degree.
