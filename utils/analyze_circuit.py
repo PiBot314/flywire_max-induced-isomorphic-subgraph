@@ -20,9 +20,9 @@ import sys
 # CONFIGURATION
 # ============================================================================
 
-DATA_DIR = Path("c:/cglearn/arnav/flywirequal-find-max-isomorphic-subgraph")
+DATA_DIR = Path("/Users/arnav/agcode/flywire/qual_challenge")
 GRAPHS_DIR = DATA_DIR / "processed" / "graph"
-CHECKPOINT_FILE = DATA_DIR / "results" / "checkpoints" / "checkpoint_1_2_4.json"
+CHECKPOINT_FILE = DATA_DIR / "network.json"
 OUTPUT_DIR = DATA_DIR / "analysis"
 
 DATASET_NAMES = {

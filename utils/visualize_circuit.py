@@ -22,9 +22,9 @@ import numpy as np
 # CONFIGURATION
 # ============================================================================
 
-DATA_DIR = Path("c:/cglearn/arnav/flywirequal-find-max-isomorphic-subgraph")
+DATA_DIR = Path("/Users/arnav/agcode/flywire/qual_challenge/")
 GRAPHS_DIR = DATA_DIR / "processed" / "graph"
-CHECKPOINT_FILE = DATA_DIR / "results" / "checkpoints" / "checkpoint_1_2_4.json"
+CHECKPOINT_FILE = DATA_DIR / "network.json"
 ANALYSIS_DIR = DATA_DIR / "analysis"
 OUTPUT_DIR = DATA_DIR / "visualizations"
 
@@ -281,7 +281,7 @@ def create_network_visualization(
 # MAIN FUNCTION
 # ============================================================================
 
-def visualize_circuit(dataset_name: str = 'FAFB', layout_type: str = 'spring',
+def visualize_circuit(dataset_name: str = 'MANC', layout_type: str = 'spring',
                      show_labels: bool = True, save_format: str = 'png'):
     """Main visualization function."""
     
@@ -362,9 +362,9 @@ def main():
     parser = argparse.ArgumentParser(
         description='Visualize isomorphic circuit network'
     )
-    parser.add_argument('--dataset', type=str, default='FAFB',
+    parser.add_argument('--dataset', type=str, default='MANC',
                        choices=['BANC', 'FAFB', 'MAOL'],
-                       help='Dataset to visualize (default: FAFB)')
+                       help='Dataset to visualize (default: MANC)')
     parser.add_argument('--layout', type=str, default='spring',
                        choices=['spring', 'circular', 'hierarchical', 
                                'kamada_kawai', 'grid'],

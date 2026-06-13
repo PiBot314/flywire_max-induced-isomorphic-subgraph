@@ -1,5 +1,7 @@
 # FLYWIRE CHALLENGE
 
+*My final algorithm does not function as intended, so I used one of the smaller solutions I found earlier.*
+
 ## Find largest induced isomorphic subgraph between 3 of the 5 datasets
 Induced Isomorphic Subgraph is the set of vertices and edges that form the same structure between the vertices and edges included, they need not form an exact match to the next set in terms of in degree and out degree.
 
@@ -23,7 +25,8 @@ Identified best candidate to start from priority given to high degree targets an
 
 ### 3) 
 
-```flowchart TD
+```mermaid
+flowchart TD
     A[Problem: Find Largest Isomorphic Circuit\nacross 3 of 5 Connectome Datasets] --> B
 
     subgraph P1[Phase 1 - Data Loading]

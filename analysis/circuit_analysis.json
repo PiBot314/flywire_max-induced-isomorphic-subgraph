@@ -1,0 +1,356 @@
+{
+  "MANC": {
+    "dataset": "MANC",
+    "basic_stats": {
+      "n_nodes": 5,
+      "n_edges": 16,
+      "density": 0.8,
+      "avg_degree": 6.4,
+      "is_connected": true,
+      "n_components": 1
+    },
+    "degree_stats": {
+      "in_degree": {
+        "mean": 3.2,
+        "std": 0.8366600265340756,
+        "min": 2,
+        "max": 4
+      },
+      "out_degree": {
+        "mean": 3.2,
+        "std": 0.8366600265340756,
+        "min": 2,
+        "max": 4
+      },
+      "total_degree": {
+        "mean": 6.4,
+        "std": 1.6733200530681511,
+        "min": 4,
+        "max": 8
+      }
+    },
+    "hub_neurons": [
+      {
+        "node_idx": 2,
+        "neuron_id": "10477",
+        "in_degree": 4,
+        "out_degree": 4,
+        "total_degree": 8
+      },
+      {
+        "node_idx": 4,
+        "neuron_id": "10286",
+        "in_degree": 4,
+        "out_degree": 4,
+        "total_degree": 8
+      },
+      {
+        "node_idx": 0,
+        "neuron_id": "10082",
+        "in_degree": 3,
+        "out_degree": 3,
+        "total_degree": 6
+      },
+      {
+        "node_idx": 1,
+        "neuron_id": "10311",
+        "in_degree": 3,
+        "out_degree": 3,
+        "total_degree": 6
+      },
+      {
+        "node_idx": 3,
+        "neuron_id": "12749",
+        "in_degree": 2,
+        "out_degree": 2,
+        "total_degree": 4
+      }
+    ],
+    "motifs": {
+      "Regulated mutual": 4,
+      "Fully connected (all reciprocal)": 5
+    },
+    "reciprocal_connections": {
+      "n_reciprocal_pairs": 8,
+      "reciprocal_pairs": [
+        [
+          "10082",
+          "10311"
+        ],
+        [
+          "10082",
+          "10477"
+        ],
+        [
+          "10082",
+          "10286"
+        ],
+        [
+          "10311",
+          "10477"
+        ],
+        [
+          "10311",
+          "10286"
+        ],
+        [
+          "10477",
+          "12749"
+        ],
+        [
+          "10477",
+          "10286"
+        ],
+        [
+          "12749",
+          "10286"
+        ]
+      ]
+    },
+    "clustering": {
+      "global_clustering": 0.7894736842105263,
+      "avg_local_clustering": 0.8666666666666666
+    },
+    "path_lengths": {
+      "avg_path_length": 1.2,
+      "max_path_length": 2.0,
+      "diameter": 2.0
+    }
+  },
+  "MAOL": {
+    "dataset": "MAOL",
+    "basic_stats": {
+      "n_nodes": 5,
+      "n_edges": 16,
+      "density": 0.8,
+      "avg_degree": 6.4,
+      "is_connected": true,
+      "n_components": 1
+    },
+    "degree_stats": {
+      "in_degree": {
+        "mean": 3.2,
+        "std": 0.8366600265340756,
+        "min": 2,
+        "max": 4
+      },
+      "out_degree": {
+        "mean": 3.2,
+        "std": 0.8366600265340756,
+        "min": 2,
+        "max": 4
+      },
+      "total_degree": {
+        "mean": 6.4,
+        "std": 1.6733200530681511,
+        "min": 4,
+        "max": 8
+      }
+    },
+    "hub_neurons": [
+      {
+        "node_idx": 2,
+        "neuron_id": "10009",
+        "in_degree": 4,
+        "out_degree": 4,
+        "total_degree": 8
+      },
+      {
+        "node_idx": 3,
+        "neuron_id": "10072",
+        "in_degree": 4,
+        "out_degree": 4,
+        "total_degree": 8
+      },
+      {
+        "node_idx": 0,
+        "neuron_id": "16286",
+        "in_degree": 3,
+        "out_degree": 3,
+        "total_degree": 6
+      },
+      {
+        "node_idx": 1,
+        "neuron_id": "10093",
+        "in_degree": 3,
+        "out_degree": 3,
+        "total_degree": 6
+      },
+      {
+        "node_idx": 4,
+        "neuron_id": "10046",
+        "in_degree": 2,
+        "out_degree": 2,
+        "total_degree": 4
+      }
+    ],
+    "motifs": {
+      "Regulated mutual": 4,
+      "Fully connected (all reciprocal)": 5
+    },
+    "reciprocal_connections": {
+      "n_reciprocal_pairs": 8,
+      "reciprocal_pairs": [
+        [
+          "16286",
+          "10093"
+        ],
+        [
+          "16286",
+          "10009"
+        ],
+        [
+          "16286",
+          "10072"
+        ],
+        [
+          "10093",
+          "10009"
+        ],
+        [
+          "10093",
+          "10072"
+        ],
+        [
+          "10009",
+          "10072"
+        ],
+        [
+          "10009",
+          "10046"
+        ],
+        [
+          "10072",
+          "10046"
+        ]
+      ]
+    },
+    "clustering": {
+      "global_clustering": 0.7894736842105263,
+      "avg_local_clustering": 0.8666666666666666
+    },
+    "path_lengths": {
+      "avg_path_length": 1.2,
+      "max_path_length": 2.0,
+      "diameter": 2.0
+    }
+  },
+  "MCNS": {
+    "dataset": "MCNS",
+    "basic_stats": {
+      "n_nodes": 5,
+      "n_edges": 16,
+      "density": 0.8,
+      "avg_degree": 6.4,
+      "is_connected": true,
+      "n_components": 1
+    },
+    "degree_stats": {
+      "in_degree": {
+        "mean": 3.2,
+        "std": 0.8366600265340756,
+        "min": 2,
+        "max": 4
+      },
+      "out_degree": {
+        "mean": 3.2,
+        "std": 0.8366600265340756,
+        "min": 2,
+        "max": 4
+      },
+      "total_degree": {
+        "mean": 6.4,
+        "std": 1.6733200530681511,
+        "min": 4,
+        "max": 8
+      }
+    },
+    "hub_neurons": [
+      {
+        "node_idx": 1,
+        "neuron_id": "10473",
+        "in_degree": 4,
+        "out_degree": 4,
+        "total_degree": 8
+      },
+      {
+        "node_idx": 3,
+        "neuron_id": "523591",
+        "in_degree": 4,
+        "out_degree": 4,
+        "total_degree": 8
+      },
+      {
+        "node_idx": 0,
+        "neuron_id": "10376",
+        "in_degree": 3,
+        "out_degree": 3,
+        "total_degree": 6
+      },
+      {
+        "node_idx": 2,
+        "neuron_id": "10515",
+        "in_degree": 3,
+        "out_degree": 3,
+        "total_degree": 6
+      },
+      {
+        "node_idx": 4,
+        "neuron_id": "10169",
+        "in_degree": 2,
+        "out_degree": 2,
+        "total_degree": 4
+      }
+    ],
+    "motifs": {
+      "Regulated mutual": 4,
+      "Fully connected (all reciprocal)": 5
+    },
+    "reciprocal_connections": {
+      "n_reciprocal_pairs": 8,
+      "reciprocal_pairs": [
+        [
+          "10376",
+          "10473"
+        ],
+        [
+          "10376",
+          "10515"
+        ],
+        [
+          "10376",
+          "523591"
+        ],
+        [
+          "10473",
+          "10515"
+        ],
+        [
+          "10473",
+          "523591"
+        ],
+        [
+          "10473",
+          "10169"
+        ],
+        [
+          "10515",
+          "523591"
+        ],
+        [
+          "523591",
+          "10169"
+        ]
+      ]
+    },
+    "clustering": {
+      "global_clustering": 0.7894736842105263,
+      "avg_local_clustering": 0.8666666666666666
+    },
+    "path_lengths": {
+      "avg_path_length": 1.2,
+      "max_path_length": 2.0,
+      "diameter": 2.0
+    }
+  }
+}

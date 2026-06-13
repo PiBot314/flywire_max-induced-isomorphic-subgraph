@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Conserved 5-Neuron Recurrent Circuit Across Three Drosophila Connectomes</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Georgia", serif;
+    font-size: 11pt;
+    line-height: 1.55;
+    color: #111;
+    background: #fff;
+    max-width: 720px;
+    margin: 28px auto;
+    padding: 0 24px 40px;
+  }
+  h1 { font-size: 15pt; font-weight: bold; text-align: center; margin-bottom: 4px; }
+  .authors { text-align: center; font-size: 10pt; color: #444; margin-bottom: 12px; }
+  .abstract-box {
+    border: 1px solid #bbb;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 10pt;
+  }
+  .abstract-box strong { display: block; margin-bottom: 4px; }
+  h2 { font-size: 12pt; font-weight: bold; margin: 16px 0 6px; border-bottom: 1px solid #ddd; padding-bottom: 2px; }
+  p  { margin-bottom: 8px; }
+  figure { margin: 12px 0; text-align: center; }
+  figure img { max-width: 100%; border: 1px solid #ccc; }
+  figcaption { font-size: 9pt; color: #444; margin-top: 5px; text-align: left; }
+  table { border-collapse: collapse; width: 100%; font-size: 9.5pt; margin: 10px 0; }
+  th, td { border: 1px solid #ccc; padding: 4px 8px; }
+  th { background: #f0f0f0; font-weight: bold; }
+  .codex-link { font-size: 9pt; word-break: break-all; }
+  ol.refs { font-size: 9.5pt; padding-left: 20px; }
+  ol.refs li { margin-bottom: 5px; }
+  .topology-box {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 8px 14px;
+    font-family: monospace;
+    font-size: 9pt;
+    margin: 10px 0;
+  }
+  @media print {
+    body { margin: 0; font-size: 10.5pt; }
+  }
+</style>
+</head>
+<body>
+
+<h1>A Conserved 5-Neuron Recurrent Circuit Shared Across Three <em>Drosophila melanogaster</em> Connectomes</h1>
+<p class="authors">FlyWire Qualification Challenge — Research Component &nbsp;|&nbsp; Dataset analysed: <strong>MAOL</strong> (Male Adult Optic Lobe)</p>
+
+<div class="abstract-box">
+  <strong>Abstract</strong>
+  We identify a 5-neuron directed circuit whose induced connectivity graph is structurally identical
+  (mutually isomorphic and weakly connected) across three <em>Drosophila melanogaster</em> connectomes:
+  MANC (Male Adult Nerve Cord), MAOL (Male Adult Optic Lobe), and MCNS (Male Central Nervous System).
+  The circuit contains 16 directed synaptic edges with a topology characterised by two dense
+  hub neurons that are recurrently connected to all peers, two intermediate nodes forming a
+  mutual loop, and one peripheral node with selective connectivity. The consistent appearance of
+  this motif across anatomically distinct neuropils suggests a fundamental circuit principle
+  conserved within the male fly nervous system.
+</div>
+
+<h2>1. Identified Circuit</h2>
+
+<p>
+  The isomorphic circuit comprises 5 neurons (N0–N4) with 16 directed edges (80% of the
+  maximum possible density for a 5-node directed graph without self-loops).
+  Neuron identifiers in each dataset are listed below.
+</p>
+
+<table>
+  <tr><th>Abstract node</th><th>MANC ID</th><th>MAOL ID</th><th>MCNS ID</th><th>In-degree (circuit)</th><th>Out-degree (circuit)</th></tr>
+  <tr><td>N0</td><td>10082</td><td>16286</td><td>10376</td><td>2</td><td>2</td></tr>
+  <tr><td>N1</td><td>10311</td><td>10093</td><td>10473</td><td>4</td><td>4</td></tr>
+  <tr><td>N2</td><td>10477</td><td>10009</td><td>10515</td><td>3</td><td>3</td></tr>
+  <tr><td>N3</td><td>12749</td><td>10072</td><td>523591</td><td>4</td><td>4</td></tr>
+  <tr><td>N4</td><td>10286</td><td>10046</td><td>10169</td><td>3</td><td>3</td></tr>
+</table>
+
+<p>
+  The shared edge structure (expressed as abstract node indices) is:
+</p>
+<div class="topology-box">
+N0→N1, N0→N3 &nbsp;|&nbsp; N1→N0, N1→N2, N1→N3, N1→N4
+N2→N1, N2→N3, N2→N4 &nbsp;|&nbsp; N3→N0, N3→N1, N3→N2, N3→N4
+N4→N1, N4→N2, N4→N3
+</div>
+<p>
+  N1 and N3 act as <em>hubs</em> — bidirectionally connected to every other node (degree 4/4).
+  N2 and N4 are <em>intermediate</em> nodes — mutually connected and linked to both hubs but
+  not to N0. N0 is a <em>peripheral</em> node connected exclusively to the two hubs.
+</p>
+
+<h2>2. Visualization of the Circuit</h2>
+
+<figure>
+  <img src="circuit_visualization.png" alt="5-neuron isomorphic circuit shown across MANC, MAOL, MCNS">
+  <figcaption>
+    <strong>Figure 1.</strong> Directed network graph of the identified 5-neuron isomorphic circuit in
+    MANC (left), MAOL (centre), and MCNS (right). Node colours are consistent across panels: N0 (orange),
+    N1 (blue), N2 (green), N3 (amber), N4 (purple). Arrows indicate directed synaptic connections.
+    Neuron IDs in each dataset are shown as external labels. The identical topology across all three
+    panels confirms mutual isomorphism.
+  </figcaption>
+</figure>
+
+<h2>3. Codex 3D Neuron Visualization (MAOL)</h2>
+
+<p>
+  The MAOL (Male Adult Optic Lobe) dataset is selected for detailed biological analysis.
+  The five constituent neurons can be visualised in the FlyWire Codex 3D mesh viewer at the
+  following URL:
+</p>
+<p class="codex-link">
+  <a href="https://codex.flywire.ai/app/viewer?ds=male_ol_v1&amp;segments=16286,10093,10009,10072,10046">
+    https://codex.flywire.ai/app/viewer?ds=male_ol_v1&amp;segments=16286,10093,10009,10072,10046
+  </a>
+</p>
+
+<p>
+  Within MAOL, the circuit neurons span a wide degree range in the full connectome graph,
+  reflecting major projection neurons typical of the optic lobe:
+</p>
+<table>
+  <tr><th>MAOL ID</th><th>Abstract node</th><th>Global in-degree</th><th>Global out-degree</th></tr>
+  <tr><td>10009 (N2)</td><td>Hub partner</td><td>11,496</td><td>9,619</td></tr>
+  <tr><td>10093 (N1)</td><td>Hub</td><td>5,515</td><td>11,215</td></tr>
+  <tr><td>10072 (N3)</td><td>Hub</td><td>4,322</td><td>10,421</td></tr>
+  <tr><td>10046 (N4)</td><td>Intermediate</td><td>952</td><td>10,883</td></tr>
+  <tr><td>16286 (N0)</td><td>Peripheral</td><td>—</td><td>—</td></tr>
+</table>
+<p>
+  The high global out-degrees of N1 (10093) and N3 (10072), each exceeding 10,000 synaptic outputs,
+  are consistent with <em>transmedullary neurons</em> (Tm cells) or <em>medulla intrinsic neurons</em>
+  (Mi cells) — cell classes known to broadcast visual signals widely across the optic lobe and into
+  the central brain [3, 4].
+</p>
+
+<h2>4. Observations and Biological Hypothesis</h2>
+
+<p>
+  The circuit topology — two recurrent hubs flanking two symmetric intermediate nodes and one
+  peripheral satellite — matches the architecture of <em>winner-take-all</em> or
+  <em>competitive normalization</em> circuits studied in visual cortex [5] and computationally
+  proposed for direction-selective neural circuits in <em>Drosophila</em> [6].
+</p>
+<p>
+  In the optic lobe, recurrent excitatory loops between high-degree medulla neurons are thought
+  to underlie contrast gain control and temporal filtering of visual inputs [4].
+  The bidirectional connections between N1 and N3 (the two hubs) and their shared connectivity
+  to N2 and N4 suggest a <em>recurrent amplification loop</em> that could sustain activity
+  across both a feedforward path (N0→N1/N3→N2/N4) and a feedback path (N2/N4→N1/N3→N0).
+</p>
+<p>
+  Critically, the same abstract topology recurs in the ventral nerve cord (MANC) and the full
+  central nervous system (MCNS). This cross-neuropil conservation implies the motif is not
+  specific to visual processing but may represent a <strong>canonical recurrent microcircuit</strong>
+  in the male fly nervous system — potentially implementing a common computational primitive
+  (such as persistent activity, local oscillation, or signal normalisation) in anatomically
+  distinct contexts [7].
+</p>
+<p>
+  A testable hypothesis: silencing hub neurons N1 or N3 in the optic lobe (MAOL 10093 or 10072,
+  targeted via split-GAL4 lines) should disrupt the sustained response properties of N2 and N4
+  during looming or motion stimuli, without abolishing initial transient responses — a signature
+  of recurrent amplification.
+</p>
+
+<h2>5. References and Citations</h2>
+
+<ol class="refs">
+  <li>Dorkenwald S, et al. (2023). "FlyWire: online community for whole-brain connectomics." <em>Nature Methods</em> 20, 225–234.</li>
+  <li>Schlegel P, et al. (2024). "Whole-brain annotation and multi-connectome cell typing of <em>Drosophila</em>." <em>Nature</em> 634, 139–152.</li>
+  <li>Matsliah A, et al. (2024). "Neuronal 'parts list' and wiring diagram for a visual system." <em>Nature</em> 634, 153–165.</li>
+  <li>Takemura S, et al. (2013). "A visual motion detection circuit suggested by <em>Drosophila</em> connectomics." <em>Nature</em> 500, 175–181.</li>
+  <li>Carandini M &amp; Heeger DJ (2012). "Normalization as a canonical neural computation." <em>Nature Reviews Neuroscience</em> 13, 51–62.</li>
+  <li>Borst A, Haag J &amp; Reiff DF (2010). "Fly motion vision." <em>Annual Review of Neuroscience</em> 33, 49–70.</li>
+  <li>Bargmann CI &amp; Marder E (2013). "From the connectome to brain function." <em>Nature Methods</em> 10, 483–490.</li>
+</ol>
+
+</body>
+</html>

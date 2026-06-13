@@ -1,0 +1,6 @@
+node_idx,neuron_id,in_degree,out_degree,total_degree
+0,10376,3,3,6
+1,10473,4,4,8
+2,10515,3,3,6
+3,523591,4,4,8
+4,10169,2,2,4
