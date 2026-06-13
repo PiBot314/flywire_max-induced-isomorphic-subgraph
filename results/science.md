@@ -21,6 +21,9 @@ The circuit utilizes a mix of neurotransmitters, suggesting a push-pull regulato
 
 In biological networks, tightly coupled excitatory and inhibitory recurrent loops prevent the circuit from falling into runaway excitation. The GABAergic neurons likely serve to modulate the timing of the circuit, allowing it to fire in precise, synchronized bursts.
 
+---
+## Additional Notes:
+I noticed there were extremely large rings present in the fly's brain, when skimming the codex 3D visualisations. I suspect they would be the "highways" for electrical impulses within the fly's brain. 
 
 1) Carandini M & Heeger DJ (2012). "Normalization as a canonical neural computation." Nature Reviews Neuroscience 13, 51–62.
 2) Borst A, Haag J & Reiff DF (2010). "Fly motion vision." Annual Review of Neuroscience 33, 49–70.
