@@ -51,6 +51,10 @@ END_ID = 5
 DEGREE_TOLERANCE = 0.20  
 BEAM_WIDTH = 10          
 
+progress_time = 1
+debug = 1
+
+
 # ============================================================================
 # DATA LOADING
 # ============================================================================
@@ -119,6 +123,8 @@ class IsomorphicCircuitFinder:
         self.vid_cache = {}
 
     def _get_vid(self, graph: ig.Graph, name: str) -> int:
+        if (debug==1):
+            print(f"function = get_vid")
         g_id = id(graph)
         if g_id not in self.vid_cache:
             self.vid_cache[g_id] = {}
@@ -134,6 +140,9 @@ class IsomorphicCircuitFinder:
         current_mapping: Dict[int, Tuple[str, str, str]],
         G1: ig.Graph, G2: ig.Graph, G3: ig.Graph
     ) -> bool:
+        if (debug==1):
+            print(f"function = can_add_to_mapping")
+
         if not current_mapping:
             return True
             
@@ -173,6 +182,8 @@ class IsomorphicCircuitFinder:
         return is_connected
 
     def _is_node_conflict(self, n1: str, n2: str, n3: str, mapping: Dict[int, Tuple[str, str, str]]) -> bool:
+        if (debug==1):
+            print(f"function = is_node_conflict")
         nodes1 = {m[0] for m in mapping.values()}
         nodes2 = {m[1] for m in mapping.values()}
         nodes3 = {m[2] for m in mapping.values()}
@@ -183,7 +194,8 @@ class IsomorphicCircuitFinder:
         G1: ig.Graph, G2: ig.Graph, G3: ig.Graph,
         deg_1: Dict[str, Tuple[int, int]], deg_2: Dict[str, Tuple[int, int]], deg_3: Dict[str, Tuple[int, int]]
     ) -> List[Tuple[str, str, str]]:
-        
+        if (debug==1):
+            print(f"function = find_hdc")
         num_nodes = len(current_mapping)
         mapped_1 = [current_mapping[i][0] for i in range(num_nodes)]
         mapped_2 = [current_mapping[i][1] for i in range(num_nodes)]
@@ -249,6 +261,8 @@ class IsomorphicCircuitFinder:
                         candidates.append((n1, n2, n3, w))
 
         candidates.sort(key=lambda x: x[3], reverse=True)
+        if (debug==1):
+            print(f"function = find_hdc_end")
         return [(c[0], c[1], c[2]) for c in candidates[:30]]
     
     def expand_with_beam_search(
@@ -257,6 +271,10 @@ class IsomorphicCircuitFinder:
         deg_1: Dict[str, Tuple[int, int]], deg_2: Dict[str, Tuple[int, int]], deg_3: Dict[str, Tuple[int, int]],
         beam_width: int = BEAM_WIDTH, max_iterations: int = 200
     ) -> Dict[int, Tuple[str, str, str]]:
+        
+        if (debug==1):
+            print(f"function = expand+beam")
+
         beam = [start_mapping.copy()]
         best_overall = start_mapping.copy()
         stall_count = 0
@@ -373,7 +391,7 @@ class IsomorphicCircuitFinder:
             top_x_seeds_d1 = sorted(deg_1.keys(), key=lambda k: deg_1[k][0] + deg_1[k][1], reverse=True)[START_ID:END_ID]
 
             for seed_idx, n1 in enumerate(top_x_seeds_d1):
-                if seed_idx % 10 == 0:
+                if seed_idx % progress_time == 0:
                     print(f"  Progress: {seed_idx}/{END_ID-START_ID} seeds tracked...", flush=True)
 
                 t_in, t_out = deg_1[n1]
